@@ -164,7 +164,7 @@ class Evangelion extends PachinkoBase implements IPachinko
 			{
 				$game++;
 				$this->ball += $this->returnBall;
-				$isAtari = $this->isAtari($this->atariArray, $this->genRand(), true);
+				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
                 $isRush10R = $this->isRush($this->rush10R);
 				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
