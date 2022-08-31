@@ -239,9 +239,9 @@ class ReZero extends PachinkoBase implements IPachinko
 	private function rush($counted, $gameId)
 	{
 		if ($counted == $this->rushBonusCount)
-			$this->overridePrint("RUSH 突入");
+			$this->overridePrint("鬼がかりRUSH 突入");
 		else
-			$this->overridePrint("RUSH 継続");
+			$this->overridePrint("鬼がかりRUSH 継続");
 		msleep(2000);
 		$array10R = [];
 		$array0R = [];
@@ -298,7 +298,7 @@ class ReZero extends PachinkoBase implements IPachinko
 					$num3 = $this->getNumber();
 				} while ($num3 == $num2);
 			}
-			$str = "[RUSH] 残り" . $i . "回 | " . $counted . "pt | [" . $num1 . $num2 . $num3 . "]";
+			$str = "[鬼がかりRUSH] 残り" . $i . "回 | " . $counted . "pt | [" . $num1 . $num2 . $num3 . "]";
 			$this->overridePrint($str);
 
 			if ($atariType != self::AT_TYPE_NONE)
