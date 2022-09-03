@@ -74,7 +74,7 @@ class Evangelion extends PachinkoBase implements IPachinko
 		o(" | RUSH中 10R: ST" . $this->st . ": 100%");
 		o("======================================");
 		echo '<div id="text"></div>';
-		echo '<img src="img/rezeroimg.jpg"/><br/>';
+		echo '<img src="img/evaimg.jpg"/><br/>';
 		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/eva.php" target="_blank">
 				<img src="../GithubLogo.png" alt="GitHubでソースコードを見る"/>
 			</a>';
@@ -207,7 +207,7 @@ class Evangelion extends PachinkoBase implements IPachinko
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pt");
 					msleep(1000);
                     $this->chanceTime($gameId, $game);
-					$this->updateData("eva", $game, 1, $this->normalBonusCount);
+					$this->updateData("eva", $game, 1, $this->normalBonusCount, false);
 					$this->start($gameId + 1);			
 				}
 			}
@@ -342,7 +342,7 @@ class Evangelion extends PachinkoBase implements IPachinko
         msleep(1500);
 		$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . "pt", true);
 		msleep(3000);
-		$this->updateData("eva", $game, $rushCount, $counted);
+		$this->updateData("eva", $game, $rushCount, $counted, true);
 		$this->start($gameId + 1);
 	}
 }

@@ -242,7 +242,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 					msleep(1500);
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pts", true);
 					msleep(1000);
-					$this->updateData("unicorn", $game, 1, $this->normalBonusCount);
+					$this->updateData("unicorn", $game, 1, $this->normalBonusCount, false);
 					$this->start($gameId + 1);			
 				}
 			}
@@ -325,12 +325,12 @@ class Unicorn extends PachinkoBase implements IPachinko
 			$this->overridePrint("ユニコーンRUSH 突入", true);
 		else if ($rushCount <= 3)
 		{
-			$this->overridePrint("超高速覚醒HYPERまであと" . 4 - $rushCount . "回", true);
+			$this->overridePrint("超高速覚醒HYPERまであと" . (4 - $rushCount) . "回", true);
 			msleep(2000);
 			$this->overridePrint("ユニコーンRUSH 継続", true);
 		}
 		else if ($rushCount != 4)
-			$this->overridePrint("UNICORN SPECIAL FEVER " . $rushCount - 1 . "回目", true);
+			$this->overridePrint("UNICORN SPECIAL FEVER " . ($rushCount - 1) . "回目", true);
 		msleep(2000);
 		$array10R = [];
 		$arrayKoatari = [];
@@ -404,7 +404,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 				msleep(1500);
 				$this->overridePrint("HYPER x " . $rushCount . " | " . sprintf("%05d", $counted) . " pts");
 				msleep(3000);
-				$this->updateData("unicorn", $game, $rushCount, $counted);
+				$this->updateData("unicorn", $game, $rushCount, $counted, true);
 				$this->start($gameId + 1, true);
 			}
 			if ($isHyper)

@@ -347,7 +347,7 @@ class Railgun extends PachinkoBase implements IPachinko
 				$this->bonus($totalBonus, $title);
 				$counted += $textBonusC;
 				$nextJitanC = $extraRush ? $this->extraJitan : $this->jitan;
-				$this->rush($counted, $gameId + 1, $rushCount + 1, false, $nextJitanC);
+				$this->rush($counted, $gameId + 1, $rushCount + 1, false, $game, $nextJitanC);
 				return;
 			}
 			msleep(800);
@@ -356,7 +356,7 @@ class Railgun extends PachinkoBase implements IPachinko
 		msleep(1000);
 		$this->overridePrint("BONUS x " . $rushCount . " TOTAL " . sprintf("%05d", $counted) . " pt");
 		msleep(2000);
-		$this->updateData("railgun", $game, $rushCount, $counted);
+		$this->updateData("railgun", $game, $rushCount, $counted, !$isJitan);
 		$this->start($gameId + 1);
 	}
 }

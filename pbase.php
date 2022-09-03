@@ -177,21 +177,38 @@ class PachinkoBase
 		$file = file_get_contents("data.json");
 		$data = json_decode($file, true);
 		if (!isset($data[$machine]))
-			$mData = [[319, 1, 0], [219, 1, 0]];
+			$mData = [[1, 1, 1, true]];
 		else
 			$mData = $data[$machine];
 		$totalBall = 0;
 		$totalGame = 0;
 		$totalK = 0;
+		$max = 0;
+		$totalBallRush = 0;
+		$totalRush = 0;
+		$maxK = 0;
 		foreach ($mData as $key => $value) {
 			$totalBall += $value[2];
 			$totalGame += $value[0];
 			$totalK += $value[1];
+			if ($value[1] > $maxK)
+				$maxK = $value[1];
+			if ($value[2] > $max)
+				$max = $value[2];
+			if ($value[3])
+			{
+				$totalBallRush += $value[2];
+				$totalRush++;
+			}
 		}
 		$str = "[機種データ]\n";
 		$str .= " - 総回転数: " . $totalGame . "回転\n";
 		$str .= " - 総出玉数: " . $totalBall . "個\n";
+		$str .= " - 最高連荘回数: " . $maxK . "回\n";
 		$str .= " - 平均連荘回数: " . round($totalK / count($mData), 2) . "回\n";
+		$str .= " - 最高出玉数: " . $max . "個\n";
+		$str .= " - 平均出玉数: " . round($totalBall / count($mData), 2) . "個\n";
+		$str .= " - RUSH時平均出玉数: " . round($totalBallRush / $totalRush, 2) . "個\n";
 		$str = str_replace("\n", "<br>", $str);
 		$this->overridePrint($str, false, "data", true);
 	}
@@ -203,14 +220,14 @@ class PachinkoBase
 		$file = file_get_contents("data.json");
 		$data = json_decode($file, true);
 		if (!isset($data[$machine]))
-			$mData = [[319, 1, 0], [219, 1, 0]];
+			$mData = [[1, 1, 1, true]];
 		else
 			$mData = $data[$machine];
 		$games = "[";
 		$labels = "[";
 		foreach ($mData as $key => $value) {
 			$games .= "" . $value[0] . ",";
-			if ($value[1] == 1)
+			if (!$value[3])
 				$labels .= "['" . $value[0] . "回転', '単発'],";
 			else
 				$labels .= "['" . $value[0] . "回転', '" . $value[1] . "連', '出玉: " . $value [2] . "発'],";
@@ -225,16 +242,16 @@ class PachinkoBase
 				labels: " . $labels . ",
 				datasets: [{
 					label: 'データカウンター グラフ',
-					backgroundColor: 'rgb(255,99,132,0)',
-					borderColor: 'rgb(255,99,132)',
+					backgroundColor: 'black',
+					borderColor: 'red',
 					data: " . $games . ",
 					tension: 0,
 					pointStyle: 'cross',
-					borderWidth: 1.5
+					borderWidth: 5
 				}]
 			};
 			const settings = {
-				type: 'line',
+				type: 'bar',
 				data: data,
 				options: {
 					scales: {
@@ -258,23 +275,23 @@ class PachinkoBase
 		</script>";
 	}
 
-	public function updateData($machine, $game, $kakuhen, $balls)
+	public function updateData($machine, $game, $kakuhen, $balls, $isRush)
 	{
 		if (!file_exists("data.json"))
 			touch("data.json");
 		$file = file_get_contents("data.json");
 		$data = json_decode($file, true);
 		if (!isset($data[$machine]))
-			$mData = [[319, 1, 0], [219, 1, 0]];
+			$mData = [[1, 1, 1, true]];
 		else
 			$mData = $data[$machine];
-		array_unshift($mData, [$game, $kakuhen, $balls]);
+		array_unshift($mData, [$game, $kakuhen, $balls, $isRush]);
 		$games = "[";
 		$labels = "[";
 		$i = 0;
 		foreach ($mData as $key => $value) {
 			$games .= "" . $value[0] . ",";
-			if ($value[1] == 1)
+			if (!$value[3])
 				$labels .= "['" . $value[0] . "回転', '単発'],";
 			else
 			$labels .= "['" . $value[0] . "回転', '" . $value[1] . "連', '出玉: " . $value [2] . "発'],";
@@ -291,16 +308,16 @@ class PachinkoBase
 				labels: " . $labels . ",
 				datasets: [{
 					label: 'データカウンター グラフ',
-					backgroundColor: 'rgb(255,99,132,0)',
-					borderColor: 'rgb(255,99,132)',
+					backgroundColor: 'black',
+					borderColor: 'red',
 					data: " . $games . ",
 					tension: 0,
 					pointStyle: 'cross',
-					borderWidth: 1.5
+					borderWidth: 5
 				}]
 			};
 			const settings = {
-				type: 'line',
+				type: 'bar',
 				data: data,
 				options: {
 					scales: {

@@ -320,7 +320,7 @@ class Slime extends PachinkoBase implements IPachinko
 		msleep(1500);
 		$this->overridePrint("BONUS x " . $rushCount . " 獲得: " . $counted . "pt", true);
 		msleep(2000);
-		$this->updateData("slime", $game, $rushCount, $counted);
+		$this->updateData("slime", $game, $rushCount, $counted, true);
 		$this->start($gameId + 1);
 	}
 }

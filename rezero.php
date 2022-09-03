@@ -198,7 +198,7 @@ class ReZero extends PachinkoBase implements IPachinko
 					$this->overridePrint("BONUS 終了");
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pt");
 					msleep(2000);
-					$this->updateData("rezero", $game, 1, $this->normalBonusCount);
+					$this->updateData("rezero", $game, 1, $this->normalBonusCount, false);
 					$this->start($gameId + 1);			
 				}
 			}
@@ -340,7 +340,7 @@ class ReZero extends PachinkoBase implements IPachinko
 		msleep(1000);
 		$this->overridePrint("獲得: " . $counted . "pt");
 		msleep(2000);
-		$this->updateData("rezero", $game, $rushCount, $counted);
+		$this->updateData("rezero", $game, $rushCount, $counted, true);
 		$this->start($gameId + 1);
 	}
 }
