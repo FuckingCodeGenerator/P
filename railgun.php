@@ -47,8 +47,11 @@ class Railgun extends PachinkoBase implements IPachinko
 
 	public function onInit()
 	{
-		echo '<div id="startup"></div>';
-		$this->overridePrint(" - Initializing Atari array...", "startup");
+		$this->color("ED7632", "000000");
+		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
+		$this->putGraph("railgun");
+		echo '<a id="data"></a>';
+		$this->putData("railgun");
 
 		$this->atariCount = $this->atariCount;
 		$this->initAtariArray($atariArray, $this->atariCount);
@@ -202,7 +205,7 @@ class Railgun extends PachinkoBase implements IPachinko
 				{
 					$this->overridePrint("超 御坂美琴BONUS");
 					msleep(3000);
-					$this->enterRush($gameId);
+					$this->enterRush($gameId, $game);
 				}
 				else
 				{
@@ -210,7 +213,7 @@ class Railgun extends PachinkoBase implements IPachinko
 					msleep(3000); 
 					$this->bonus($this->normalBonusCount, "御坂美琴BONUS");
 					msleep(2000);
-					$this->rush(410, $gameId, 1, true);
+					$this->rush(410, $gameId, 1, true, $game);
 				}
 			}
 		}
@@ -234,13 +237,13 @@ class Railgun extends PachinkoBase implements IPachinko
 			if ($this->isInRush())
 			{
 				if ($count10R == 0)
-					$increace = 5;
+					$increace = $this->shokyu4R;
 				else
 				{
 					if ($currentBonus <= $count10R)
-						$increace = 15;
+						$increace = $this->shokyu10R;
 					else
-						$increace = 5;
+						$increace = $this->shokyu4R;
 				}
 				$this->ball += $increace;
 				$counted += $increace;
@@ -258,16 +261,17 @@ class Railgun extends PachinkoBase implements IPachinko
 	 * RUSH 突入
 	 *
 	 * @param int $gameId
+	 * @param int $game
 	 * @return void
 	 */
-	private function enterRush($gameId)
+	private function enterRush($gameId, $game)
 	{
 		$this->bonus($this->normalBonusCount, "超 御坂美琴BONUS");
 		msleep(500);
-		$this->rush(410, $gameId, 1, false);
+		$this->rush(410, $gameId, 1, false, $game);
 	}
 
-	private function rush($counted, $gameId, $rushCount, $isJitan, $jitan = null)
+	private function rush($counted, $gameId, $rushCount, $isJitan, $game, $jitan = null)
 	{
 		if ($jitan == null)
 			$jitan = $this->jitan;
@@ -348,14 +352,14 @@ class Railgun extends PachinkoBase implements IPachinko
 			}
 			msleep(800);
 		}
-		$this->overridePrint("超電磁砲RUSH 終了");
+		$this->overridePrint("超電磁砲RUSH 終了", true);
+		msleep(1000);
 		$this->overridePrint("BONUS x " . $rushCount . " TOTAL " . sprintf("%05d", $counted) . " pt");
 		msleep(2000);
+		$this->updateData("railgun", $game, $rushCount, $counted);
 		$this->start($gameId + 1);
 	}
 }
-
-echo '<body bgcolor="#ED7632" text="#00000000"/>';
 
 o("Initializing. Please wait...");
 

@@ -46,8 +46,11 @@ class Slime extends PachinkoBase implements IPachinko
 
 	public function onInit()
 	{
-		echo '<div id="startup"></div>';
-		$this->overridePrint(" - Initializing Atari array...", "startup");
+		$this->color("0186CB", "000000");
+		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
+		$this->putGraph("slime");
+		echo '<a id="data"></a>';
+		$this->putData("slime");
 
 		$this->atariCount = $this->atariCount;
 		$this->initAtariArray($atariArray, $this->atariCount);
@@ -165,7 +168,7 @@ class Slime extends PachinkoBase implements IPachinko
 				msleep(1000);
 				$this->overridePrint("大当");
                 msleep(3000);
-                $this->enterRush($gameId);
+                $this->enterRush($gameId, $game);
 			}
 		}
 	}
@@ -194,36 +197,23 @@ class Slime extends PachinkoBase implements IPachinko
 		msleep(2000);
 	}
 
-	/**
-	 * RUSH 突入
-	 *
-	 * @param int $gameId
-	 * @return void
-	 */
-	private function enterRush($gameId)
+	private function enterRush($gameId, $game)
 	{
 		$this->bonus($this->normalBonusCount);
 		msleep(500);
-		$this->rush($this->normalBonusCount, $gameId, $this->st);
+		$this->rush($this->normalBonusCount, $gameId, $this->st, 1, $game);
 	}
 
-	/**
-	 * RUSH
-	 *
-	 * @param int $counted	獲得済み玉数
-	 * @param int $gameId
-	 * @return void
-	 */
-	private function rush($counted, $gameId, $st)
+	private function rush($counted, $gameId, $st, $rushCount, $game)
 	{
         if ($st == $this->st)
             $name = "転生したらRUSHだった件";
         else
             $name = "転生したら超RUSHだった件";
 		if ($counted == $this->normalBonusCount)
-			$this->overridePrint($name . " 開幕");
+			$this->overridePrint($name . " 開幕", true);
 		else
-			$this->overridePrint($name . " 継続");
+			$this->overridePrint($name . " 継続", true);
 		msleep(2000);
 		$arAtari = [];
 		$atariType = self::AT_TYPE_NONE;
@@ -304,8 +294,9 @@ class Slime extends PachinkoBase implements IPachinko
                 {
                     if ($st == $this->st)
                     {
-                        $this->overridePrint("RUSH 終了");
-                        $this->overridePrint("獲得: " . $counted . "pt");
+                        $this->overridePrint("RUSH 終了", true);
+						msleep(1500);
+                        $this->overridePrint("獲得: " . $counted . "pt", true);
                         msleep(2000);
                         $this->start($gameId + 1);                        
                         return;                        
@@ -313,26 +304,26 @@ class Slime extends PachinkoBase implements IPachinko
                     else
                     {
                         $st = $this->st;
-                        $this->rush($counted, $gameId + 1, $st);
+                        $this->rush($counted, $gameId + 1, $st, $rushCount + 1, $game);
                         return;
                     }
                 }
                 if ($atariType == self::AT_TYPE_20R)
                     $st = $this->stJ;
-				$this->rush($counted, $gameId + 1, $st);
+				$this->rush($counted, $gameId + 1, $st, $rushCount + 1, $game);
 				return;
 			}
             $sleepTime = ($st == $this->st) ? 1200 : 600;
 			msleep($sleepTime);
 		}
-		$this->overridePrint("RUSH 終了");
-		$this->overridePrint("獲得: " . $counted . "pt");
+		$this->overridePrint("RUSH 終了", true);
+		msleep(1500);
+		$this->overridePrint("BONUS x " . $rushCount . " 獲得: " . $counted . "pt", true);
 		msleep(2000);
+		$this->updateData("slime", $game, $rushCount, $counted);
 		$this->start($gameId + 1);
 	}
 }
-
-echo '<body bgcolor="#0186CB" text="#00000000"/>';
 
 o("Initializing. Please wait...");
 

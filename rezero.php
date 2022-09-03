@@ -55,8 +55,11 @@ class ReZero extends PachinkoBase implements IPachinko
 
 	public function onInit()
 	{
-		echo '<div id="startup"></div>';
-		$this->overridePrint(" - Initializing Atari array...", "startup");
+		$this->color("786CAE");
+		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
+		$this->putGraph("rezero");
+		echo '<a id="data"></a>';
+		$this->putData("rezero");
 
 		$this->atariCount = $this->atariCount;
 		$this->initAtariArray($atariArray, $this->atariCount);
@@ -78,6 +81,10 @@ class ReZero extends PachinkoBase implements IPachinko
 		o(" | RUSH中 突然確変: ST144: " . round($this->atariCount0R / $this->totalAC * 100, 2) . "%");
 		o("======================================");
 		echo '<div id="text"></div>';
+		echo '<img src="img/rezeroimg.jpg"/><br/>';
+		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/rezero.php" target="_blank">
+				<img src="../GithubLogo.png" alt="GitHubでソースコードを見る"/>
+			</a>';
 	}
 
 	private function printGame($isAtari, $game, $ball, $usedBall, $isRush)
@@ -180,7 +187,7 @@ class ReZero extends PachinkoBase implements IPachinko
 				{
 					$this->overridePrint("RUSH 確定");
 					msleep(3000);
-					$this->enterRush($gameId);
+					$this->enterRush($gameId, $game);
 				}
 				else
 				{
@@ -191,6 +198,7 @@ class ReZero extends PachinkoBase implements IPachinko
 					$this->overridePrint("BONUS 終了");
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pt");
 					msleep(2000);
+					$this->updateData("rezero", $game, 1, $this->normalBonusCount);
 					$this->start($gameId + 1);			
 				}
 			}
@@ -220,13 +228,14 @@ class ReZero extends PachinkoBase implements IPachinko
 	 * RUSH 突入
 	 *
 	 * @param int $gameId
+	 * @param int $game		ゲーム数
 	 * @return void
 	 */
-	private function enterRush($gameId)
+	private function enterRush($gameId, $game)
 	{
 		$this->bonus($this->rushBonusCount);
 		msleep(500);
-		$this->rush($this->rushBonusCount, $gameId);
+		$this->rush($this->rushBonusCount, $gameId, $game, 1);
 	}
 
 	/**
@@ -234,14 +243,16 @@ class ReZero extends PachinkoBase implements IPachinko
 	 *
 	 * @param int $counted	獲得済み玉数
 	 * @param int $gameId
+	 * @param int $game		ゲーム数
+	 * @param int $rushCount
 	 * @return void
 	 */
-	private function rush($counted, $gameId)
+	private function rush($counted, $gameId, $game, $rushCount)
 	{
 		if ($counted == $this->rushBonusCount)
-			$this->overridePrint("鬼がかりRUSH 突入");
+			$this->overridePrint("鬼がかりRUSH 突入", true);
 		else
-			$this->overridePrint("鬼がかりRUSH 継続");
+			$this->overridePrint("鬼がかりRUSH 継続", true);
 		msleep(2000);
 		$array10R = [];
 		$array0R = [];
@@ -315,19 +326,21 @@ class ReZero extends PachinkoBase implements IPachinko
 				{
 					$this->overridePrint("Re: START");
 					msleep(1000);
-					$this->rush($counted, $gameId + 1);
+					$this->rush($counted, $gameId + 1, $game, $rushCount + 1);
 					return;
 				}
 				$this->bonus($bonusCount);
 				$counted += $bonusCount;
-				$this->rush($counted, $gameId + 1);
+				$this->rush($counted, $gameId + 1, $game, $rushCount + 1);
 				return;
 			}
 			msleep(650);
 		}
-		$this->overridePrint("RUSH 終了");
+		$this->overridePrint("RUSH 終了", true);
+		msleep(1000);
 		$this->overridePrint("獲得: " . $counted . "pt");
 		msleep(2000);
+		$this->updateData("rezero", $game, $rushCount, $counted);
 		$this->start($gameId + 1);
 	}
 }

@@ -49,8 +49,12 @@ class Evangelion extends PachinkoBase implements IPachinko
 
     public function onInit()
 	{
+		$this->color("5b496c");
 		echo '<div id="startup"></div>';
-		$this->overridePrint(" - Initializing Atari array...", "startup");
+		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
+		$this->putGraph("eva");
+		echo '<a id="data"></a>';
+		$this->putData("eva");
 
 		$this->atariCount = $this->atariCount;
 		$this->initAtariArray($atariArray, $this->atariCount);
@@ -70,6 +74,10 @@ class Evangelion extends PachinkoBase implements IPachinko
 		o(" | RUSH中 10R: ST" . $this->st . ": 100%");
 		o("======================================");
 		echo '<div id="text"></div>';
+		echo '<img src="img/rezeroimg.jpg"/><br/>';
+		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/eva.php" target="_blank">
+				<img src="../GithubLogo.png" alt="GitHubでソースコードを見る"/>
+			</a>';
 	}
 
     private function printGame($isAtari, $game, $ball, $usedBall, $isRush, $isRush10R)
@@ -174,19 +182,19 @@ class Evangelion extends PachinkoBase implements IPachinko
 			if ($isAtari)
 			{
 				msleep(1000);
-				$this->overridePrint("大当");
+				$this->overridePrint("大当", true);
 				msleep(3000);
 				if ($isRush10R)
 				{
-					$this->overridePrint("全回転");
+					$this->overridePrint("全回転", true);
 					msleep(3000);
-					$this->enterRush(1500, $gameId);
+					$this->enterRush(1500, $gameId, $game);
 				}
 				else if ($isRush)
                 {
 					$this->overridePrint("RUSH 確定");
 					msleep(3000);
-					$this->enterRush($this->normalBonusCount, $gameId);
+					$this->enterRush($this->normalBonusCount, $gameId, $game);
                 }
                 else
 				{
@@ -195,18 +203,20 @@ class Evangelion extends PachinkoBase implements IPachinko
 					$this->bonus($this->normalBonusCount);
 					msleep(1000);
 					$this->overridePrint("BONUS 終了");
+					msleep(1000);
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pt");
 					msleep(1000);
-                    $this->chanceTime($gameId);
+                    $this->chanceTime($gameId, $game);
+					$this->updateData("eva", $game, 1, $this->normalBonusCount);
 					$this->start($gameId + 1);			
 				}
 			}
 		}
 	}
 
-    private function chanceTime($gameId)
+    private function chanceTime($gameId, $game)
     {
-        $this->overridePrint("チャンスタイム " . $this->jitan . "回");
+        $this->overridePrint("チャンスタイム " . $this->jitan . "回", true);
         msleep(2000);
 		for ($i = $this->jitan; $i >= 0; $i--)
 		{
@@ -233,7 +243,7 @@ class Evangelion extends PachinkoBase implements IPachinko
             {
                 msleep(2000);
                 $this->bonus(1500);
-                $this->rush(1950, $gameId, 1);
+                $this->rush(1950, $gameId, 1, $game);
                 return;
             }
             msleep(650);
@@ -262,14 +272,16 @@ class Evangelion extends PachinkoBase implements IPachinko
 	/**
 	 * RUSH 突入
 	 *
+	 * @param int $bonusCount
 	 * @param int $gameId
+	 * @param int $game
 	 * @return void
 	 */
-	private function enterRush($bonusCount, $gameId)
+	private function enterRush($bonusCount, $gameId, $game)
 	{
 		$this->bonus($bonusCount);
 		msleep(500);
-		$this->rush($bonusCount, $gameId, 1);
+		$this->rush($bonusCount, $gameId, 1, $game);
 	}
 
 	/**
@@ -278,14 +290,15 @@ class Evangelion extends PachinkoBase implements IPachinko
 	 * @param int $counted	獲得済み玉数
 	 * @param int $gameId
      * @param int $rushCount
+	 * @param int $game
 	 * @return void
 	 */
-	private function rush($counted, $gameId, $rushCount)
+	private function rush($counted, $gameId, $rushCount, $game)
 	{
 		if ($rushCount == 1)
-			$this->overridePrint("IMPACT MODE 突入");
+			$this->overridePrint("IMPACT MODE 突入", true);
 		else
-			$this->overridePrint("IMPACT MODE 継続");
+			$this->overridePrint("IMPACT MODE 継続", true);
 		msleep(2000);
 		$array10R = [];
 		$this->initAtariArray($array10R, $this->atariCount10R);
@@ -312,23 +325,24 @@ class Evangelion extends PachinkoBase implements IPachinko
             if ($num3 == $num2)
             {
                 msleep(2000);
-                $this->overridePrint("開放");
+                $this->overridePrint("開放", true);
                 msleep(1500);
-                $this->overridePrint("完全決着");
+                $this->overridePrint("完全決着", true);
                 msleep(2000);
-                $this->overridePrint($rushCount + 1 . "回目");
+                $this->overridePrint($rushCount + 1 . "回目", true);
                 msleep(2500);
                 $this->bonus(1500);
                 $counted += 1500;
-                $this->rush($counted, $gameId + 1, $rushCount + 1);
+                $this->rush($counted, $gameId + 1, $rushCount + 1, $game);
                 return;
             }
             msleep(650);
 		}
-		$this->overridePrint("IMPACT MODE 終了");
+		$this->overridePrint("IMPACT MODE 終了", true);
         msleep(1500);
-		$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . "pt");
+		$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . "pt", true);
 		msleep(3000);
+		$this->updateData("eva", $game, $rushCount, $counted);
 		$this->start($gameId + 1);
 	}
 }
