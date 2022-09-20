@@ -6,6 +6,7 @@ require_once 'pbase.php';
  */
 class ReZero extends PachinkoBase implements IPachinko
 {
+	const UNIQUE_ID = "rezero";
 	const AT_TYPE_NONE = 0;
 	const AT_TYPE_20R = 1;
 	const AT_TYPE_2R = 2;
@@ -57,9 +58,9 @@ class ReZero extends PachinkoBase implements IPachinko
 	{
 		$this->color("786CAE");
 		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
-		$this->putGraph("rezero");
+		$this->putGraph(self::UNIQUE_ID);
 		echo '<a id="data"></a>';
-		$this->putData("rezero");
+		$this->putData(self::UNIQUE_ID);
 
 		$this->atariCount = $this->atariCount;
 		$this->initAtariArray($atariArray, $this->atariCount);
@@ -81,8 +82,8 @@ class ReZero extends PachinkoBase implements IPachinko
 		o(" | RUSH中 突然確変: ST144: " . round($this->atariCount0R / $this->totalAC * 100, 2) . "%");
 		o("======================================");
 		echo '<div id="text"></div>';
-		echo '<img src="img/rezeroimg.jpg"/><br/>';
-		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/rezero.php" target="_blank">
+		echo '<img src="img/' . self::UNIQUE_ID . 'img.jpg"/><br/>';
+		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/' . self::UNIQUE_ID . '.php" target="_blank">
 				<img src="../GithubLogo.png" alt="GitHubでソースコードを見る"/>
 			</a>';
 	}
@@ -198,7 +199,7 @@ class ReZero extends PachinkoBase implements IPachinko
 					$this->overridePrint("BONUS 終了");
 					$this->overridePrint("獲得: " . $this->normalBonusCount . "pt");
 					msleep(2000);
-					$this->updateData("rezero", $game, 1, $this->normalBonusCount, false);
+					$this->updateData(self::UNIQUE_ID, $game, 1, $this->normalBonusCount, false);
 					$this->start($gameId + 1);			
 				}
 			}
@@ -261,6 +262,12 @@ class ReZero extends PachinkoBase implements IPachinko
 		$this->initAtariArray($array0R, $this->atariCount0R);
 		for ($i = $this->st; $i >= 0; $i--)
 		{
+			if (!$this->isInRush())
+            {
+                $this->ball--;
+                $i++;
+                continue;
+            }
 			$rand = $this->genRand();
 			if ($this->isAtari($this->atariArray, $rand))
 			{
@@ -337,10 +344,12 @@ class ReZero extends PachinkoBase implements IPachinko
 			msleep(650);
 		}
 		$this->overridePrint("RUSH 終了", true);
-		msleep(1000);
-		$this->overridePrint("獲得: " . $counted . "pt");
 		msleep(2000);
-		$this->updateData("rezero", $game, $rushCount, $counted, true);
+		$this->overridePrint("獲得: " . $counted . "pt");
+		msleep(3000);
+		if ($counted != $this->rushBonusCount)
+			$rushCount--;
+		$this->updateData(self::UNIQUE_ID, $game, $rushCount, $counted, true);
 		$this->start($gameId + 1);
 	}
 }
