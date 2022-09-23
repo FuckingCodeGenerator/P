@@ -245,9 +245,9 @@ class Slime extends PachinkoBase implements IPachinko
                     if ($bRand <= $this->p20R)
                         $atariType = self::AT_TYPE_20R;
                     else if ($bRand <= ($this->p20R + (100 - ($this->p20R + $this->pTenraku))))
-                        $atariType = self::AT_TYPE_NORMAL;
-                    else
                         $atariType = self::AT_TYPE_10R;
+                    else
+                        $atariType = self::AT_TYPE_NORMAL;
                 }
 				switch ($atariType)
 				{
@@ -316,6 +316,8 @@ class Slime extends PachinkoBase implements IPachinko
             $sleepTime = ($st == $this->st) ? 1200 : 600;
 			msleep($sleepTime);
 		}
+		if ($counted != $this->normalBonusCount)
+			$rushCount--;
 		$this->overridePrint("RUSH 終了", true);
 		msleep(1500);
 		$this->overridePrint("BONUS x " . $rushCount . " 獲得: " . $counted . "pt", true);

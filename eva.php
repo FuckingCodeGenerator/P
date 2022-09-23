@@ -338,6 +338,8 @@ class Evangelion extends PachinkoBase implements IPachinko
             }
             msleep(650);
 		}
+		if ($counted != $this->normalBonusCount)
+			$rushCount--;
 		$this->overridePrint("IMPACT MODE 終了", true);
         msleep(1500);
 		$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . "pt", true);

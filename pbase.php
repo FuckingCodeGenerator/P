@@ -225,12 +225,15 @@ class PachinkoBase
 			$mData = $data[$machine];
 		$games = "[";
 		$labels = "[";
+		$i = 0;
 		foreach ($mData as $key => $value) {
 			$games .= "" . $value[0] . ",";
 			if (!$value[3])
 				$labels .= "['" . $value[0] . "回転', '単発'],";
 			else
 				$labels .= "['" . $value[0] . "回転', '" . $value[1] . "連', '出玉: " . $value [2] . "発'],";
+			if ($i++ == 10)
+			break;
 		}
 		$games = trim($games, ",");
 		$labels = trim($labels, ",");

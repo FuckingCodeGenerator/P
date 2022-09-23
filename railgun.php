@@ -334,7 +334,7 @@ class Railgun extends PachinkoBase implements IPachinko
 				if ($extraRush)
 				{
 					msleep(1500);
-					$this->overridePrint("超電磁フリーズZONE");
+					$this->overridePrint("超電磁フリーズZONE", true);
 					msleep(3000);
 				}
 				switch ($totalBonus)
@@ -352,6 +352,8 @@ class Railgun extends PachinkoBase implements IPachinko
 			}
 			msleep(800);
 		}
+		if ($counted != $this->normalBonusCount)
+			$rushCount--;
 		$this->overridePrint("超電磁砲RUSH 終了", true);
 		msleep(1000);
 		$this->overridePrint("BONUS x " . $rushCount . " TOTAL " . sprintf("%05d", $counted) . " pt");

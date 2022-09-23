@@ -399,6 +399,8 @@ class Unicorn extends PachinkoBase implements IPachinko
             }
 			else if ($koatari)
 			{
+				if ($counted != $this->normalBonusCount)
+					$rushCount--;
 				msleep(3000);
 				$this->overridePrint($rushName . " 終了");
 				msleep(1500);
