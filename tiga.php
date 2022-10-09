@@ -2,29 +2,24 @@
 require_once 'pbase.php';
 
 /**
- * PF 機動戦士ガンダムユニコーン
+ * ぱちんこ ウルトラマンティガ 1500×84
  */
-class Unicorn extends PachinkoBase implements IPachinko
+class Tiga extends PachinkoBase implements IPachinko
 {
     const ST_3R  = 0;
     const ST_10R = 1;
 
 	/**
 	 * @param int $atariCount		確率分母
-	 * @param int $atariCount10R	RUSH中10R確率分母
-	 * @param int $koatariCount		RUSH中転落小当たり確率分母
+	 * @param int $koatariCount		RUSH中小当たり確率分母
 	 * @param int $rush				RUSH突入率
-     * @param int $rush10R          10RRUSH突入率
 	 * @param int $ball				初期持ち玉数
 	 */
-	function __construct($atariCount, $atariCount10R, $koatariCount, $rush, $rush10R, $ball)
+	function __construct($atariCount, $koatariCount, $rush, $ball)
 	{
-		$this->atariCount		= $atariCount;
-		$this->atariCount10R	= $atariCount10R;
+		$this->atariCount	= $atariCount;
 		$this->koatariCount = $koatariCount;
 		$this->rush		    = $rush;
-        $this->rush10R      = $rush10R;
-        $this->totalRush    = $rush + $rush10R;
 		$this->ball		    = $ball;
 	}
 
@@ -37,11 +32,8 @@ class Unicorn extends PachinkoBase implements IPachinko
 
 	private $ball;
 
-	private $atariCount10R;
 	private $koatariCount;
 	private $rush;
-    private $rush10R;
-    private $totalRush;
 	private $jitan = 10000;
 	private $atariCount;
 	private $returnBall = 3;
@@ -49,19 +41,18 @@ class Unicorn extends PachinkoBase implements IPachinko
 
     public function onInit()
 	{
-		$this->color("006900");
+		$this->color("A40000");
 		echo '<div style="background-color:#ffffff; width: 1000px;"><canvas id="graph"></canvas></div>';
-		$this->putGraph("unicorn");
+		$this->putGraph("tiga");
 		echo '<a id="data"></a>';
-		$this->putData("unicorn");
-		$this->atariCount = $this->atariCount;
+		$this->putData("tiga");
 		$this->initAtariArray($atariArray, $this->atariCount);
 		$this->atariArray = $atariArray;
 
 		$continueP = 0;
 		$nextP = 1;
-		$atariP = 1 / (self::ARRAY_SIZE / $this->atariCount10R);
-		$koatariP = 1 / (self::ARRAY_SIZE / $this->koatariCount);
+		$atariP = 1 / (self::ARRAY_SIZE / $this->koatariCount);
+		$koatariP = 1 / (self::ARRAY_SIZE / $this->atariCount);
 		for ($i = 0; $i < 500; $i++)
 		{
 			$continueP += $nextP * $atariP * (1 - $koatariP);
@@ -71,26 +62,26 @@ class Unicorn extends PachinkoBase implements IPachinko
 		
 		o("\nDone.");
 		o("\n======================================");
-		o(" | PF 機動戦士ガンダムユニコーン");
-		o(" | 大当たり確立: 1/" . round(self::ARRAY_SIZE / $this->atariCount, 2) . " -> 1/" . round(self::ARRAY_SIZE / $this->atariCount10R, 2));
-		o(" | RUSH中小当たり確立: 1/" . round(self::ARRAY_SIZE / $this->koatariCount, 2));
-		o(" | RUSH 突入率: " . $this->totalRush . "%");
+		o(" | ぱちんこ ウルトラマンティガ 1500×84");
+		o(" | 大当たり確立: 1/" . round(self::ARRAY_SIZE / $this->atariCount, 2) . " -> 1/" . round(self::ARRAY_SIZE / $this->koatariCount, 2));
+		o(" | RUSH中転落大当たり確立: 1/" . round(self::ARRAY_SIZE / $this->atariCount, 2));
+		o(" | RUSH 突入率: " . $this->rush . "%");
 		o(" | RUSH 継続率: " . $continueP * 100 . "%");
 		o(" | ラウンド: 3R or 10R");
-		o(" | 出玉: 450 or 1500 or 3000");
-		o(" | 通常時 3R: 時短" . $this->jitan . "回: " . $this->rush . "%");
-		o(" | 通常時 10R x 2: 時短" . $this->jitan . "回: " . $this->rush10R . "%");
-        o(" | 通常時 3R: 時短0回: " . (100 - $this->totalRush) . "%");
-		o(" | RUSH中 10R: 時短" . $this->jitan . "回: 100%");
+		o(" | 出玉: 450 or 1500");
+		o(" | 通常時 10R: 時短次回まで: " . $this->rush . "%");
+        o(" | 通常時 3R: 時短0回: " . (100 - $this->rush) . "%");
+		o(" | RUSH中 小当たり: 10R: 時短次回まで: 100%");
+        o(" | RUSH中 大当たり: 0R: 時短0回: 100%");
 		o("======================================");
 		echo '<div id="text"></div>';
-		echo '<img src="img/unicornimg.jpg"/><br/>';
-		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/unicorn.php" target="_blank">
+		echo '<img src="img/tigaimg.jpg"/><br/>';
+		echo '<a href="https://github.com/FuckingCodeGenerator/P/blob/main/tiga.php" target="_blank">
 				<img src="../GithubLogo.png" alt="GitHubでソースコードを見る"/>
 			</a>';
 	}
 
-    private function printGame($isAtari, $game, $ball, $usedBall, $isRush, $isRush10R, $zanho = false)
+    private function printGame($isAtari, $game, $ball, $usedBall, $isRush, $zanho = false)
 	{
 		$skip = false;
 		$reach = $isAtari ? true : $this->isReach();
@@ -108,15 +99,15 @@ class Unicorn extends PachinkoBase implements IPachinko
 					{
 						if ($isRush)
                         {
-							$nums = [1, 3, 5];
-                            $num1 = $nums[mt_rand(0, 2)];
+							$nums = [1, 3, 5, 7];
+                            $num1 = $nums[mt_rand(0, 3)];
                         }
 						else
                         {
 							$nums = [2, 4, 6, 8];
                             $num1 = $nums[mt_rand(0, 3)];
                         }
-                        if ($isRush10R || $zanho)
+                        if ($zanho)
                             $num1 = 7;
 					}
 				}
@@ -133,7 +124,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 				if ($zanho)
 					$str = "[残保留 残り" . (5 - $game) . "個] [" . $num1 . $num3 . $num2 . "]";
 				else
-					$str = "[" . $game . " GAME] 持ち玉: " . $ball . "玉 | 消費玉: " . $usedBall . "玉 | 所持金: " . $ball * 4 . "円 | " . $rate .  "回転/1k | [" . $num1 . $num3 . $num2 . "]";
+					$str = "[GAME " . $game . "] 持ち玉: " . $ball . "玉 | 消費玉: " . $usedBall . "玉 | 所持金: " . $ball * 4 . "円 | " . $rate .  "回転/1k | [" . $num1 . $num3 . $num2 . "]";
 				if ($reach && $l == 2 && $i == 9)
 				{
 					if (!$skip)
@@ -161,7 +152,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 		if ($zanho)
 			$str = "[残保留 残り" . (5 - $game) . "個] [" . $num1 . $num3 . $num2 . "]";
 		else
-			$str = "[" . $game . " GAME] 持ち玉: " . $ball . "玉 | 消費玉: " . $usedBall . "玉 | 所持金: " . $ball * 4 . "円 | " . $rate .  "回転/1k | [" . $num1 . $num3 . $num2 . "]";
+			$str = "[GAME " . $game . "] 持ち玉: " . $ball . "玉 | 消費玉: " . $usedBall . "玉 | 所持金: " . $ball * 4 . "円 | " . $rate .  "回転/1k | [" . $num1 . $num3 . $num2 . "]";
 		$this->overridePrint($str);
 
 		return [$num1, $num2, $num3, $rate];
@@ -172,29 +163,26 @@ class Unicorn extends PachinkoBase implements IPachinko
 	 *
 	 * @return void
 	 */
-	public function start($gameId, $zanho = false)
+	public function start($gameId, $zanho = false, $counted = 0, $rushCount = 1)
 	{
 		set_time_limit(0);
 		$game = 0;
 		$usedBall = 0;
-		$nums = [1, 3, 2, 0];
 		$isAtari = false;
-		$str = "[" . $game . " GAME] 持ち玉: " . $this->ball . "玉 | 消費玉: " . $usedBall . "玉 | 所持金: " . $this->ball * 4 . "円 | " . $nums[3] .  "回転/1k | [" . $nums[0] . $nums[2] . $nums[1] . "]";
-		$this->overridePrint($str);
 
 		if ($gameId != 0 && $game == 0 && $zanho)
 		{
 			$array10R = [];
-			$this->initAtariArray($array10R, $this->atariCount10R);
+			$this->initAtariArray($array10R, $this->koatariCount);
 			for ($i = 4; $i >= 0; $i--)
 			{
 				$game++;
 				$isAtari = $this->isAtari($array10R, $this->genRand());
-				$this->printGame($isAtari, $game, 0, 1, false, false, true);
+				$this->printGame($isAtari, $game, 0, 1, false, true);
 				msleep(1000);
 				if ($isAtari)
 				{
-					$this->enterRush(1500, $gameId, $game);
+					$this->enterRush(1500, $gameId, $game, $counted, $rushCount);
 					return;
 				}
 			}
@@ -210,8 +198,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 				$this->ball += $this->returnBall;
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
-                $isRush10R = $this->isRush($this->rush10R);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
+				$this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush);
 				msleep(500);
 			}
 
@@ -220,17 +207,11 @@ class Unicorn extends PachinkoBase implements IPachinko
 				msleep(1000);
 				$this->overridePrint("大当");
 				msleep(3000);
-				if ($isRush10R)
-				{
-					$this->overridePrint("3000 FEVER", true);
-					msleep(3000);
-					$this->enterRush(3000, $gameId, $game);
-				}
-				else if ($isRush)
+                if ($isRush)
                 {
 					$this->overridePrint("RUSH 確定");
 					msleep(3000);
-					$this->enterRush($this->normalBonusCount, $gameId, $game);
+					$this->enterRush(1500, $gameId, $game);
                 }
                 else
 				{
@@ -240,18 +221,21 @@ class Unicorn extends PachinkoBase implements IPachinko
 					msleep(1000);
 					$this->overridePrint("BONUS 終了", true);
 					msleep(1500);
-					$this->overridePrint("獲得: " . $this->normalBonusCount . "pts", true);
+					$this->overridePrint("獲得: " . $this->normalBonusCount . "upt", true);
 					msleep(1000);
-					$this->updateData("unicorn", $game, 1, $this->normalBonusCount, false);
+					$this->updateData("tiga", $game, 1, $this->normalBonusCount, false);
 					$this->start($gameId + 1);			
 				}
 			}
 		}
 	}
 
-	private function bonus($count, $isHyper)
+	private function bonus($count, $isHyper, $gl = false)
 	{
 		$counted = 0;
+        $glitter = "";
+        if ($gl)
+            $glitter = "[PREMIUM GLITTER BONUS] ";
 		while ($counted < $count)
 		{
 			$this->ball--;
@@ -263,7 +247,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 			$round = floor(($counted - 15) / 150) + 1;
 			if ($round > 10)
 				$round -= 10;
-			$str = "[ROUND " . $round . "] 持ち玉: " . $this->ball . "玉 | TOTAL " . $counted . "/" . $count;
+			$str = $glitter . "[ROUND " . $round . "] 持ち玉: " . $this->ball . "玉 | " . $counted . "upt";
 			$this->overridePrint($str);
 			msleep(100);
 		}
@@ -273,22 +257,11 @@ class Unicorn extends PachinkoBase implements IPachinko
 			msleep(2000);
 	}
 
-	/**
-	 * RUSH 突入
-	 *
-	 * @param int $bonusCount	出玉
-	 * @param int $gameId
-	 * @param int $game
-	 * @return void
-	 */
-	private function enterRush($bonusCount, $gameId, $game)
+	private function enterRush($bonusCount, $gameId, $game, $counted = 0, $rushCount = 1)
 	{
 		$this->bonus($bonusCount, false);
 		msleep(1000);
-		if ($bonusCount == 3000)
-			$this->rush($bonusCount, $gameId, 3, $game);
-		else
-			$this->rush($bonusCount, $gameId, 1, $game);
+		$this->rush($bonusCount + $counted, $gameId, $rushCount, $game);
 	}
 
 	/**
@@ -302,39 +275,25 @@ class Unicorn extends PachinkoBase implements IPachinko
 	 */
 	private function rush($counted, $gameId, $rushCount, $game)
 	{
-		$isHyper = $rushCount > 3;
+		$isHyper = $rushCount > 1;
 		if ($isHyper)
-			$rushName = "覚醒HYPER";
+			$rushName = "ウルトラ超光RUSH";
 		else
-			$rushName = "ユニコーン RUSH";
-		if ($rushCount == 4)
+			$rushName = "ウルトラバトルRUSH";
+		if ($rushCount == 2)
 		{
-			msleep(1000);
-			$this->overridePrint("3連続勝利達成", true);
-			msleep(5000);
-			$this->overridePrint("命を賭すことで　極限を超越した獣", true);
-			msleep(4000);
-			$this->overridePrint("ユニコーンガンダム　ついに―――", true);
-			msleep(3500);
-			$this->overridePrint("超　覚　醒", true);
 			msleep(3000);
-			$this->overridePrint("覚醒HYPER START", true);
+			$this->overridePrint("ウルトラ超光RUSH 突入", true);
 			msleep(2000);
 		}
 		if ($rushCount == 1)
-			$this->overridePrint("ユニコーンRUSH 突入", true);
-		else if ($rushCount <= 3)
-		{
-			$this->overridePrint("超高速覚醒HYPERまであと" . (4 - $rushCount) . "回", true);
-			msleep(2000);
-			$this->overridePrint("ユニコーンRUSH 継続", true);
-		}
-		else if ($rushCount != 4)
-			$this->overridePrint("UNICORN SPECIAL FEVER " . ($rushCount - 1) . "回目", true);
+			$this->overridePrint("ウルトラバトルRUSH 突入", true);
+        else if ($rushCount != 2)
+			$this->overridePrint("ウルトラ超光BONUS " . $rushCount . "回目", true);
 		msleep(2000);
-		$array10R = [];
+		$array0R = [];
 		$arrayKoatari = [];
-		$this->initAtariArray($array10R, $this->atariCount10R);
+		$this->initAtariArray($array0R, $this->atariCount);
 		$this->initAtariArray($arrayKoatari, $this->koatariCount);
 		for ($i = $this->jitan; $i >= 0; $i--)
 		{
@@ -347,17 +306,17 @@ class Unicorn extends PachinkoBase implements IPachinko
 			do
 			{
 				$rand = $this->genRand();
-				$at10R = $this->isAtari($array10R, $rand);
+				$at0R = $this->isAtari($array0R, $rand);
 				$koatari = $this->isAtari($arrayKoatari, $rand);
-			} while ($at10R && $koatari);
+			} while ($at0R && $koatari);
 
-			if ($at10R)
+			if ($koatari)
 			{
                 $num1 = 7;
                 $num2 = 7;
                 $num3 = 7;
 			}
-			else if ($koatari)
+			else if ($at0R)
 			{
 				$num1 = "E";
 				$num2 = "N";
@@ -384,41 +343,39 @@ class Unicorn extends PachinkoBase implements IPachinko
 					$num3 = "D";
 				}
 			}
-            $str = "[" . $rushName . "] [" . $num1 . $num2 . $num3 . "] | TOTAL " . $counted . " pts";
+            $str = "[" . $rushName . "] [" . $num1 . $num2 . $num3 . "] | TOTAL " . $counted . " upt";
             $this->overridePrint($str);
-            if ($at10R)
+            if ($koatari)
             {
 				if ($isHyper)
                 	msleep(500);
 				else
 					msleep(2500);
-                $this->bonus(1500, $isHyper);
+                $this->bonus(1500, $isHyper, !$isHyper);
                 $counted += 1500;
                 $this->rush($counted, $gameId + 1, $rushCount + 1, $game);
                 return;
             }
-			else if ($koatari)
+			else if ($at0R)
 			{
-				if ($counted != $this->normalBonusCount)
-					$rushCount--;
 				msleep(3000);
 				$this->overridePrint($rushName . " 終了");
 				msleep(1500);
-				$this->overridePrint("HYPER x " . $rushCount . " | " . sprintf("%05d", $counted) . " pts");
+				$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . " upt");
 				msleep(3000);
-				$this->updateData("unicorn", $game, $rushCount, $counted, true);
-				$this->start($gameId + 1, true);
+				$this->updateData("tiga", $game, $rushCount, $counted, true);
+				$this->start($gameId + 1, true, $counted, $rushCount);
 			}
 			if ($isHyper)
             	msleep(300);
 			else
-				msleep(1300);
+				msleep(900);
 		}
 	}
 }
 
 o("Initializing. Please wait...");
 
-$unicorn = new Unicorn(205, 1594, 426, 40, 20, 0);
-$unicorn->onInit();
-$unicorn->start(0);
+$tiga = new Tiga(205, 968, 50, 0);
+$tiga->onInit();
+$tiga->start(0);
