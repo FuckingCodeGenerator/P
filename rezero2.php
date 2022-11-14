@@ -173,8 +173,11 @@ class ReZero2 extends PachinkoBase implements IPachinko
 				$this->ball += $this->returnBall;
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)
@@ -335,8 +338,6 @@ class ReZero2 extends PachinkoBase implements IPachinko
 		msleep(2000);
 		$this->overridePrint("試練 x " . $rushCount . " | 獲得: " . $counted . "pt");
 		msleep(3000);
-		if ($counted != $this->rushBonusCount)
-			$rushCount--;
 		$this->updateData(self::UNIQUE_ID, $game, $rushCount, $counted, true);
 		$this->start($gameId + 1);
 	}

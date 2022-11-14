@@ -211,8 +211,11 @@ class Unicorn extends PachinkoBase implements IPachinko
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
                 $isRush10R = $this->isRush($this->rush10R);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)
@@ -302,12 +305,12 @@ class Unicorn extends PachinkoBase implements IPachinko
 	 */
 	private function rush($counted, $gameId, $rushCount, $game)
 	{
-		$isHyper = $rushCount > 3;
+		$isHyper = $rushCount > 2;
 		if ($isHyper)
 			$rushName = "覚醒HYPER";
 		else
 			$rushName = "ユニコーン RUSH";
-		if ($rushCount == 4)
+		if ($rushCount == 3)
 		{
 			msleep(1000);
 			$this->overridePrint("3連続勝利達成", true);
@@ -323,13 +326,13 @@ class Unicorn extends PachinkoBase implements IPachinko
 		}
 		if ($rushCount == 1)
 			$this->overridePrint("ユニコーンRUSH 突入", true);
-		else if ($rushCount <= 3)
+		else if ($rushCount <= 2)
 		{
 			$this->overridePrint("超高速覚醒HYPERまであと" . (4 - $rushCount) . "回", true);
 			msleep(2000);
 			$this->overridePrint("ユニコーンRUSH 継続", true);
 		}
-		else if ($rushCount != 4)
+		else if ($rushCount != 3)
 			$this->overridePrint("UNICORN SPECIAL FEVER " . ($rushCount - 1) . "回目", true);
 		msleep(2000);
 		$array10R = [];
@@ -412,7 +415,7 @@ class Unicorn extends PachinkoBase implements IPachinko
 			if ($isHyper)
             	msleep(300);
 			else
-				msleep(2000);
+				msleep(1300);
 		}
 	}
 }

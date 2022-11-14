@@ -190,8 +190,11 @@ class Idol extends PachinkoBase implements IPachinko
 					$this->rush(0, $gameId, 1, 500, false, true);
 					return;
 				}
-				$this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush9R);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush9R);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)

@@ -159,8 +159,11 @@ class Slime extends PachinkoBase implements IPachinko
 				$game++;
 				$this->ball += $this->returnBall;
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
-				$this->printGame($isAtari, $game, $this->ball, $usedBall);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$this->printGame($isAtari, $game, $this->ball, $usedBall);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)

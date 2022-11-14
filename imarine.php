@@ -161,8 +161,11 @@ class IMarine extends PachinkoBase implements IPachinko
 				$this->ball += $this->returnBall;
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
                 $roundR = mt_rand(1, 100);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $roundR);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $roundR);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)
@@ -298,7 +301,7 @@ class IMarine extends PachinkoBase implements IPachinko
             }
     
             $str = "(残り" . ($isST ? ($c - $jitan) : $c) . "回) (" . $num1 . $num3 . $num2 . ")";
-            $this->overridePrint($str);
+            $this->overridePrint($str, true);
             if ($isAtari)
             {
                 msleep(2000);
@@ -317,6 +320,6 @@ class IMarine extends PachinkoBase implements IPachinko
 
 o("Initializing. Please wait...");
 
-$imarine = new IMarine(656, 6560, 57, 33, 10, 5, 0);
+$imarine = new IMarine(656, 6560, 57, 33, 10, 4, 0);
 $imarine->onInit();
 $imarine->start(0);

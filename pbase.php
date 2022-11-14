@@ -208,9 +208,13 @@ class PachinkoBase
 		$str .= " - 平均連荘回数: " . round($totalK / count($mData), 2) . "回\n";
 		$str .= " - 最高出玉数: " . $max . "個\n";
 		$str .= " - 平均出玉数: " . round($totalBall / count($mData), 2) . "個\n";
-		$str .= " - RUSH時平均出玉数: " . round($totalBallRush / $totalRush, 2) . "個\n";
+		$str .= " - RUSH時平均出玉数: " . round($totalBallRush / $totalRush, 2) . "個\n\n";
 		$str = str_replace("\n", "<br>", $str);
 		$this->overridePrint($str, false, "data", true);
+
+		echo '<form action="' . $machine . '.php" method="post">
+				<button type="submit" name="skip_normal">通常時スキップ</button>
+			</form>';
 	}
 
 	public function putGraph($machine)

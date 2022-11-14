@@ -192,8 +192,11 @@ class Railgun extends PachinkoBase implements IPachinko
 				$this->ball += $this->returnBall;
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)
@@ -352,8 +355,6 @@ class Railgun extends PachinkoBase implements IPachinko
 			}
 			msleep(800);
 		}
-		if ($counted != $this->normalBonusCount)
-			$rushCount--;
 		$this->overridePrint("超電磁砲RUSH 終了", true);
 		msleep(1000);
 		$this->overridePrint("BONUS x " . $rushCount . " TOTAL " . sprintf("%05d", $counted) . " pt");

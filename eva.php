@@ -175,8 +175,11 @@ class Evangelion extends PachinkoBase implements IPachinko
 				$isAtari = $this->isAtari($this->atariArray, $this->genRand());
 				$isRush = $this->isRush($this->rush);
                 $isRush10R = $this->isRush($this->rush10R);
-				$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
-				msleep(500);
+				if (!isset($_POST["skip_normal"]) || $isAtari)
+				{
+					$nums = $this->printGame($isAtari, $game, $this->ball, $usedBall, $isRush, $isRush10R);
+					msleep(500);
+				}
 			}
 
 			if ($isAtari)
@@ -338,8 +341,6 @@ class Evangelion extends PachinkoBase implements IPachinko
             }
             msleep(650);
 		}
-		if ($counted != $this->normalBonusCount)
-			$rushCount--;
 		$this->overridePrint("IMPACT MODE 終了", true);
         msleep(1500);
 		$this->overridePrint("BONUS x " . $rushCount . " | " . sprintf("%05d", $counted) . "pt", true);
